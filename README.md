@@ -157,7 +157,7 @@ flowchart TD
         FD["publish(event), publishTombstone(seq)<br/>queues the version in MergeBuffer on this thread"]
     end
 
-    subgraph TT["Thread &quot;tailer&quot; (exactly one per stream)"]
+    subgraph TT["Thread tailer (exactly one per stream)"]
         T["1. read rows, queue each in MergeBuffer<br/>2. take the folded result of each sealed seq, in order<br/>3. under the lock: window put, advance W, offer to subscriptions<br/>4. park for pollMillis, or until hinted"]
     end
 
@@ -167,14 +167,14 @@ flowchart TD
         W["PersistenceWatermark W<br/>advanced only by the tailer, under the lock"]
     end
 
-    subgraph SHARED["Threads &quot;shared-0&quot; .. &quot;shared-K-1&quot; (SharedSubscriber, K threads)"]
+    subgraph SHARED["Threads shared-0 .. shared-K-1 (SharedSubscriber, K threads)"]
         direction LR
         SH1["shared-0<br/>pumps its subscriptions"]
         SH2["shared-1<br/>pumps its subscriptions"]
         SHK["shared-K-1<br/>..."]
     end
 
-    subgraph DEDICATED["Threads &quot;subscriber&quot; (DedicatedSubscriber, one per subscription)"]
+    subgraph DEDICATED["Threads subscriber (DedicatedSubscriber, one per subscription)"]
         direction LR
         DT1["subscriber thread 1<br/>pumps subscription 1"]
         DT2["subscriber thread 2<br/>pumps subscription 2"]
