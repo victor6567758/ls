@@ -1179,3 +1179,20 @@ ALL SUBSCRIBERS CONSISTENT
 ```
 
 Events = history + live for every row, and the 7 skipped ids are missing from every total.
+
+## Sources
+
+The design is original to this project. The ideas and tools below are the ones the article refers to; the links were
+not re-checked when this section was written, so verify them before relying on them.
+
+* LMAX Disruptor: <https://github.com/LMAX-Exchange/disruptor> (sequence cursors, per-slot availability; see **Related work**)
+* Catch-up subscriptions, as in EventStoreDB: <https://developers.eventstore.com/> (history first, then live)
+* Apache Kafka documentation, offsets and consumer positions: <https://kafka.apache.org/documentation/>
+* Server-Sent Events and `Last-Event-ID`: <https://html.spec.whatwg.org/multipage/server-sent-events.html>
+* Andreas Andreakis, Ioannis Papapanagiotou, "DBLog: A Watermark Based Change-Data-Capture Framework" (Netflix): <https://arxiv.org/abs/2010.12597>
+* The Java Memory Model, JLS chapter 17 (why `volatile` publication orders the ring writes before `W`): <https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html>
+* JCTools, queue alternatives mentioned under **the cost of `AtomicReferenceArray`**: <https://github.com/JCTools/JCTools>
+* JMH, the benchmark harness behind `PartitionBench`: <https://github.com/openjdk/jmh>
+* jcstress, concurrency stress testing (Exercise 4): <https://github.com/openjdk/jcstress>
+* PostgreSQL `LISTEN` / `NOTIFY` (Exercise 3): <https://www.postgresql.org/docs/current/sql-notify.html>
+* This repository: `src/main` and `src/test`, and the measured output of `Demo.main` shown above
