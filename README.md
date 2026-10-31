@@ -824,13 +824,20 @@ neither.
 
 ### The three possible results of `LiveRing.read(seq)`
 
-Used by registration to copy history, and by the stream to answer a subscriber from the window:
+Used by registration to copy history. It is the only place that reads the window for a subscriber; a subscriber that
+falls behind later is cancelled and registers again.
+
+For each seq from `fromSeq` up to the watermark, registration first checks the dead ranges, then reads the ring:
 
 ```
-slot holds seq == s                 -> copy into the history
-slot is null, or holds an older seq -> not in the window (the stream started after it): reject
+seq is in a dead range              -> nothing to deliver there: skip it (the slot was never written)
+slot holds seq == s                 -> copy the merged event into the history
+slot is null, or holds an older seq -> not in the window (before the stream's window): reject
 slot holds a newer seq              -> overwritten: older than the window, reject
 ```
+
+The dead-range check comes first because a dead seq is never put in the ring, so its slot looks like "not written".
+Without the check, a subscriber whose history crosses a dead hole would be rejected.
 
 ### Why the lock is enough
 
